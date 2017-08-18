@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+<script src="{% static "JQuery/jquery-3.2.1.js"%}"></script>
+</head>
+
+<body>
+{% block body %}
+{% endblock %}
+
+<script type="text/javascript">
+	$.ajaxSetup({
+			beforeSend: function(xhr, settings) {
+				if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+					   // Only send the token to relative URLs i.e. locally.
+					xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
+				}
+			}
+		});
+	function ajaxcall() {
+		$.ajax({
+			type: "POST",
+			url: "/files/posttime/",
+			data:{
+				'id' : {{fileviewing.id}},
+			},
+			success: function(){
+			}
+		})
+	}
+</script>
+{% block script %}
+{% endblock %}
+</body>
+
+</html>

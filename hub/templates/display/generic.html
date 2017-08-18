@@ -1,0 +1,26 @@
+{% extends 'display/display_skin.html' %}
+
+{% block script%}
+<script type="text/javascript">
+			$('#theplayer').get(0).play();
+
+			var window_focus;
+
+			setInterval(function() {
+				if($('#theplayer').get(0).paused){
+					console.log('Not Focus')
+				}
+				else{
+					console.log('Focus')
+					ajaxcall()
+				}
+			}, 1000);
+	</script>
+{% endblock %}
+
+{% block body %}
+
+<video id = "theplayer" width="320" height="240" controls>
+    <source src="{% url 'get_file' token.id %}" type="video/mp4">
+</video>
+{% endblock %}
