@@ -10,12 +10,13 @@ class FilesAdmin(admin.ModelAdmin):
 	readonly_fields = ("document_url", "download_report",)
 	prepopulated_fields = {"slug": ("title",) }
 	def document_url(self, obj):
-   		return '<a href="/files/%s/">Link to Document</a>' % obj.slug
-   	def download_report(self, obj):
-   		return '<button class = "report_button" id = "%s">Report</button>' % obj.id
+		return '<a href="/files/%s/">Link to Document</a>' % obj.slug
+	def download_report(self, obj):
+		return '<button><a download="file.csv" href="/files/getfile/%s/">Download</a></button>' % obj.id
 	document_url.allow_tags = True
 	download_report.allow_tags = True
 
 
 
 admin.site.register(Files, FilesAdmin)
+# admin.site.register(FileViewing)
