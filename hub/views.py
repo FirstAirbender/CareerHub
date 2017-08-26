@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, Http404
 from .models import Files, FileViewing, ViewingPermissionToken
+from django.contrib.auth.decorators import login_required
 from django.utils.six.moves import range
 from django.utils import timezone
 from datetime import timedelta
@@ -10,14 +11,18 @@ import magic
 
 
 # Create your views here.
-# @login_required
+@login_required
 def displayfile(request, slug):
 	file = get_object_or_404(Files, slug=slug)
 	# generate file loading permission token
 	token = ViewingPermissionToken.objects.create(user=request.user, file=file)
 	# check if user has viewed this file in the last /x/ hours
 	# timeframe = timezone.now() - timedelta(hours=24)
-	timeframe = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+	timeframe = timezone.now().replace(hour=0, minute=0, second=0, microsecond=1)
+	print timezone.now()-timedelta(hours = 4)
+	print timeframe
+	print timezone.now() - timedelta(hours=24)
+
 	fileviewing = FileViewing.objects.filter(timestamp__gte=timeframe, file=file, user=request.user).first()
 	if fileviewing is None:
 		fileviewing = FileViewing.objects.create(file=file, user=request.user)
@@ -34,9 +39,9 @@ def displayfile(request, slug):
 	if filetype == ".mp4":
 		return render(request, 'display/generic.html', context)
 	else:
-		pass
+		return render(request, 'display/generic_pdf.html', context)
 
-
+@login_required
 def getFileViaToken(request, uuid):
 	token = get_object_or_404(ViewingPermissionToken, id=uuid)
 	file = token.file
@@ -58,6 +63,7 @@ class Echo(object):
 		"""Write the value by returning it, instead of storing in a buffer."""
 		return value
 
+@login_required
 def getFileAdmin(request,id):
 	"""A view that streams a large CSV file."""
 	# Generate a sequence of rows. The range is based on the maximum number of
@@ -71,9 +77,10 @@ def getFileAdmin(request,id):
 	writer = csv.writer(pseudo_buffer)
 	response = StreamingHttpResponse((writer.writerow(row) for row in rows),
 									 content_type="text/csv")
-	response['Content-Disposition'] = 'attachment; filename="file.csv"'
+	response['Content-Disposition'] = 'attachment; filename="'+file.slug+'-report.csv"'
 	return response
 
+@login_required
 def posttime(request):
 	if request.POST:
 		fileviewing = get_object_or_404(FileViewing, pk=request.POST.get("id"))

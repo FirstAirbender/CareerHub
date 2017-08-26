@@ -2,12 +2,36 @@
 <html lang="en">
 {% load static %}
 <head>
+<link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap.css"%}">
+<!-- <link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/narrow-jumbotron.css"%}"> -->
 <script src="{% static "JQuery/jquery-3.2.1.js"%}"></script>
+<script src="{% static "pdfjs/build/pdf.js"%}"></script>
+<script src="{% static "pdfjs/build/pdf.worker.js"%}"></script>
+<script src="{% static "bootstrap/js/bootstrap.js"%}"></script>
+<script src="{% static "bootstrap/js/popper.js"%}"></script>
 </head>
 
 <body>
-{% block body %}
-{% endblock %}
+    <div class="container">
+      <div class="header clearfix">
+        <nav>
+        </nav>
+        <img src="{% static "logo.png" %}" height="25%" width="25%">
+      </div>
+
+      <div>
+      	{% block body %}
+      	{% endblock %}
+      </div>
+
+      <footer class="footer">
+        <p>Having trouble viewing the document? Please <a href = "mailto:gs4sandh@edu.uwaterloo.ca" target="_top">contact</a> the developer with the issue</p>
+
+      </footer>
+
+    </div> <!-- /container -->
+
+
 
 <script type="text/javascript">
 	$.ajaxSetup({
@@ -29,6 +53,26 @@
 			}
 		})
 	}
+</script>
+<script type="text/javascript">
+	var vis = (function(){
+		var stateKey, eventKey, keys = {
+			hidden: "visibilitychange",
+			webkitHidden: "webkitvisibilitychange",
+			mozHidden: "mozvisibilitychange",
+			msHidden: "msvisibilitychange"
+		};
+		for (stateKey in keys) {
+			if (stateKey in document) {
+				eventKey = keys[stateKey];
+				break;
+			}
+		}
+		return function(c) {
+			if (c) document.addEventListener(eventKey, c);
+			return !document[stateKey];
+		}
+	})()
 </script>
 {% block script %}
 {% endblock %}
