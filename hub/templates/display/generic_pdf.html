@@ -98,12 +98,8 @@ var url = "{% url 'get_file' token.id %}";
 	setInterval(function(){
 		if(vis()==true){
 			ajaxcall()
-			console.log('call')
 		}
-		else{
-			console.log('nope')
-		}
-	}, 1000);
+	}, 10000);
 	$('.focuspage').bind('contextmenu', function(e) {
 	return false;
 }); 

@@ -24,4 +24,4 @@ urlpatterns = [
 	url(r'^files/', include('hub.urls')),
 ]
 
-admin.site.site_header = "Career Hub"
+admin.site.site_header = "ME100 Resources"

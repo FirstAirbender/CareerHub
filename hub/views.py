@@ -18,10 +18,8 @@ def displayfile(request, slug):
 	token = ViewingPermissionToken.objects.create(user=request.user, file=file)
 	# check if user has viewed this file in the last /x/ hours
 	# timeframe = timezone.now() - timedelta(hours=24)
-	timeframe = timezone.now().replace(hour=0, minute=0, second=0, microsecond=1)
-	print timezone.now()-timedelta(hours = 4)
-	print timeframe
-	print timezone.now() - timedelta(hours=24)
+	# timeframe = timezone.now().replace(hour=0, minute=0, second=0, microsecond=1)
+	timeframe = timezone.now()
 
 	fileviewing = FileViewing.objects.filter(timestamp__gte=timeframe, file=file, user=request.user).first()
 	if fileviewing is None:
@@ -87,6 +85,6 @@ def posttime(request):
 		if fileviewing.user!=request.user:
 			raise Http404
 		else:
-			fileviewing.seconds_viewed += 1
+			fileviewing.seconds_viewed += 10
 			fileviewing.save()
 	return HttpResponse(fileviewing.id)
