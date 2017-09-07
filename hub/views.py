@@ -11,6 +11,7 @@ import magic
 from wsgiref.util import FileWrapper
 import mimetypes
 import os
+from django.conf import settings
 
 def smart_str(x):
 	if isinstance(x, unicode):
@@ -99,16 +100,18 @@ def posttime(request):
 	return HttpResponse(fileviewing.id)
 
 @login_required
-def downloadfile(request):
-	if request.POST:
-		fileviewing = get_object_or_404(FileViewing, pk=request.POST.get("id"))
-		file_name = fileviewing.file.file.name
-		file_path = fileviewing.file.file.path
-		file_wrapper = FileWrapper(file(file_path,'rb'))
-		file_mimetype = mimetypes.guess_type(file_path)
-		response = HttpResponse(file_wrapper, content_type=file_mimetype)
-		response['X-Sendfile'] = file_path
-		response['Content-Length'] = os.stat(file_path).st_size
-		response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(file_name)
-		print response
-		return response
+def downloadfile(request, id):
+	# fileviewing = get_object_or_404(FileViewing, pk=request.POST.get("id"))
+	fileviewing = get_object_or_404(FileViewing, pk=id)
+	file_name = fileviewing.file.file.name
+	# file_path = fileviewing.file.file.path
+	file_path = file_name
+
+	file_wrapper = FileWrapper(file(file_path,'rb'))
+	file_mimetype = mimetypes.guess_type(file_path)
+	response = HttpResponse(file_wrapper, content_type=file_mimetype)
+	response['X-Sendfile'] = file_path
+	response['Content-Length'] = os.stat(file_path).st_size
+	response['Content-Disposition'] = 'attachment; filename=%s' % file_name.split('/')[-1]
+	# print response
+	return response
