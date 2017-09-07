@@ -17,6 +17,7 @@
         <nav>
         </nav>
         <img src="{% static "logo.png" %}" height="25%" width="25%">
+        <button id = "download_files" class = "btn btn-primary" >Download</button>
       </div>
 
       <div>
@@ -53,6 +54,19 @@
 			}
 		})
 	}
+	$('#download_files').on('click', function(){
+		console.log("{% url 'get_file' token.id %}")
+		$.ajax({
+			type: "POST",
+			url: '/files/downloadfile/',
+			data: {
+				'id': {{fileviewing.id}}
+			},
+			success: function(){
+				console.log('did it downloadfile')
+			}
+		})
+	})
 </script>
 <script type="text/javascript">
 	var vis = (function(){

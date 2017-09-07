@@ -8,7 +8,16 @@ import cStringIO as StringIO
 from django.http import *
 import csv
 import magic
+from wsgiref.util import FileWrapper
+import mimetypes
+import os
 
+def smart_str(x):
+	if isinstance(x, unicode):
+		return unicode(x).encode("utf-8")
+	elif isinstance(x, int) or isinstance(x, float):
+		return str(x)
+	return x
 
 # Create your views here.
 @login_required
@@ -88,3 +97,18 @@ def posttime(request):
 			fileviewing.seconds_viewed += 10
 			fileviewing.save()
 	return HttpResponse(fileviewing.id)
+
+@login_required
+def downloadfile(request):
+	if request.POST:
+		fileviewing = get_object_or_404(FileViewing, pk=request.POST.get("id"))
+		file_name = fileviewing.file.file.name
+		file_path = fileviewing.file.file.path
+		file_wrapper = FileWrapper(file(file_path,'rb'))
+		file_mimetype = mimetypes.guess_type(file_path)
+		response = HttpResponse(file_wrapper, content_type=file_mimetype)
+		response['X-Sendfile'] = file_path
+		response['Content-Length'] = os.stat(file_path).st_size
+		response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(file_name)
+		print response
+		return response
